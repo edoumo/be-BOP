@@ -112,6 +112,26 @@
 	let pricingSchedule: NonNullable<Product['pricingSchedule']> = (
 		product.pricingSchedule ?? []
 	).map((p) => ({ ...p }));
+
+	// HP robustness: products created with only eShop actionSettings (no retail /
+	// googleShopping / nostr) must not crash the admin form. Merge with defaults
+	// once; the guard prevents a reactive loop after the first normalization.
+	$: if (
+		product.actionSettings &&
+		(!product.actionSettings.retail ||
+			!product.actionSettings.googleShopping ||
+			!product.actionSettings.nostr)
+	) {
+		product.actionSettings = {
+			eShop: { ...defaultActionSettings.eShop, ...product.actionSettings.eShop },
+			retail: { ...defaultActionSettings.retail, ...product.actionSettings.retail },
+			googleShopping: {
+				...defaultActionSettings.googleShopping,
+				...product.actionSettings.googleShopping
+			},
+			nostr: { ...defaultActionSettings.nostr, ...product.actionSettings.nostr }
+		};
+	}
 	function addPricingPhase() {
 		pricingSchedule = [
 			...pricingSchedule,
