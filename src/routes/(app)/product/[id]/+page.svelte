@@ -226,7 +226,7 @@
 	);
 
 	$: canBuy = data.hasPosOptions
-		? data.product.actionSettings.retail.canBeAddedToBasket
+		? data.product.actionSettings.retail?.canBeAddedToBasket
 		: data.product.actionSettings.eShop.canBeAddedToBasket;
 
 	function getWeekDayFromDate(date: Date) {
@@ -526,7 +526,7 @@
 	<meta property="product:price:amount" content={String(data.product.price.amount)} />
 	<meta property="product:price:currency" content={data.product.price.currency} />
 	<meta property="og:type" content="og:product" />
-	{#if data.product.actionSettings.googleShopping.visible}
+	{#if data.product.actionSettings.googleShopping?.visible}
 		<!-- eslint-disable svelte/no-at-html-tags -->
 		{@html serializeSchema(schema)}
 	{/if}
