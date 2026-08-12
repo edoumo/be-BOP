@@ -623,7 +623,7 @@
 					</div>
 				{/if}
 
-				{#if data.product.description.trim() || data.product.shortDescription.trim()}
+				{#if data.product.description?.trim() || data.product.shortDescription?.trim()}
 					<hr class="border-gray-300" />
 					<h2 class="text-[22px]">
 						{data.product.displayShortDescription && data.product.shortDescription
@@ -632,7 +632,7 @@
 					</h2>
 					<div class="prose body-secondaryText lg:block hidden">
 						<!-- eslint-disable svelte/no-at-html-tags -->
-						{@html marked(data.product.description.replaceAll('<', '&lt;'))}
+						{@html marked((data.product.description ?? '').replaceAll('<', '&lt;'))}
 					</div>
 				{/if}
 			</div>
@@ -1275,7 +1275,7 @@
 
 				<div class="prose body-secondaryText block lg:hidden">
 					<!-- eslint-disable svelte/no-at-html-tags -->
-					{@html marked(data.product.description.replaceAll('<', '&lt;'))}
+					{@html marked((data.product.description ?? '').replaceAll('<', '&lt;'))}
 				</div>
 			</div>
 		</div>
