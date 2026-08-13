@@ -12,6 +12,8 @@ export const ALLOW_JS_INJECTION =
 export const ALLOW_LND_RPC = dynPrivateEnv.ALLOW_LND_RPC ?? staticPrivateEnv.ALLOW_LND_RPC;
 export const ALLOW_PAID_ORDER_WEBHOOK =
 	dynPrivateEnv.ALLOW_PAID_ORDER_WEBHOOK ?? staticPrivateEnv.ALLOW_PAID_ORDER_WEBHOOK;
+export const BE_BOP_CATALOG_API_KEY =
+	dynPrivateEnv.BE_BOP_CATALOG_API_KEY ?? staticPrivateEnv.BE_BOP_CATALOG_API_KEY;
 export const BIP84_XPUB = dynPrivateEnv.BIP84_XPUB ?? staticPrivateEnv.BIP84_XPUB;
 export const BITCOIN_RPC_PASSWORD =
 	dynPrivateEnv.BITCOIN_RPC_PASSWORD ?? staticPrivateEnv.BITCOIN_RPC_PASSWORD;

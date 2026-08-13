@@ -15,13 +15,15 @@ export const GET = async ({ params, fetch, locals, url, cookies }) => {
 
 	const code_verifier = client.randomPKCECodeVerifier();
 	const code_challenge = await client.calculatePKCECodeChallenge(code_verifier);
+	const nonce = client.randomNonce();
 
 	const parameters = {
 		redirect_uri: `${url.origin}/oauth/${encodeURIComponent(params.slug)}/callback`,
 		scope: oauth.scope,
 		code_challenge,
 		code_challenge_method: 'S256',
-		state: client.randomState()
+		state: client.randomState(),
+		nonce
 	};
 
 	const redirectTo = client.buildAuthorizationUrl(await oauthConfig(oauth, fetch), parameters);
@@ -33,6 +35,12 @@ export const GET = async ({ params, fetch, locals, url, cookies }) => {
 		path: `/oauth/${encodeURIComponent(params.slug)}/callback`
 	});
 	cookies.set('oauth_state', parameters.state, {
+		httpOnly: true,
+		secure: url.origin.startsWith('https'),
+		sameSite: 'lax',
+		path: `/oauth/${encodeURIComponent(params.slug)}/callback`
+	});
+	cookies.set('oauth_nonce', nonce, {
 		httpOnly: true,
 		secure: url.origin.startsWith('https'),
 		sameSite: 'lax',
