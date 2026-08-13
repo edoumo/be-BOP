@@ -142,6 +142,9 @@ export const GET = async ({ params, fetch, cookies, url, locals }) => {
 					{ _id: user._id },
 					{ $set: { roleId: nextRole, updatedAt: new Date() } }
 				);
+				// L'objet en mémoire doit refléter le nouveau rôle : le redirect
+				// final (admin vs login) s'appuie sur user.roleId.
+				user = { ...user, roleId: nextRole };
 				console.log(`[oidc] role_recomputed provider=${provider} role=${nextRole}`);
 			}
 		}
