@@ -148,7 +148,9 @@ export const GET = async ({ params, fetch, cookies, url, locals }) => {
 	}
 
 	// 4. Liaison de la session au compte (userId) — le user est désormais
-	//    authentifié be-BOP sans second mot de passe.
+	//    authentifié be-BOP sans second mot de passe. Upsert unique : si la
+	//    session n'existe pas encore, elle est créée ici (jamais d'insertOne
+	//    séparé — évite E11000 duplicate key sur sessionId).
 	if (user) {
 		await collections.sessions.updateOne(
 			{ sessionId: locals.sessionId },
@@ -156,35 +158,25 @@ export const GET = async ({ params, fetch, cookies, url, locals }) => {
 				$set: {
 					userId: user._id,
 					updatedAt: new Date(),
-					expiresAt: addYears(new Date(), 1)
+					expiresAt: addYears(new Date(), 1),
+					sso: [...(session?.sso || []).filter((s) => s.provider !== ssoInfo.provider), ssoInfo]
 				},
 				$setOnInsert: { createdAt: new Date() }
 			},
 			{ upsert: true }
 		);
-	}
-
-	if (!session) {
-		await collections.sessions.insertOne({
-			sessionId: locals.sessionId,
-			createdAt: new Date(),
-			updatedAt: new Date(),
-			_id: new ObjectId(),
-			expiresAt: addYears(new Date(), 1),
-			sso: [ssoInfo]
-		});
 	} else {
 		await collections.sessions.updateOne(
-			{
-				sessionId: locals.sessionId
-			},
+			{ sessionId: locals.sessionId },
 			{
 				$set: {
 					updatedAt: new Date(),
 					expiresAt: addYears(new Date(), 1),
-					sso: [...(session.sso || []).filter((s) => s.provider !== ssoInfo.provider), ssoInfo]
-				}
-			}
+					sso: [...(session?.sso || []).filter((s) => s.provider !== ssoInfo.provider), ssoInfo]
+				},
+				$setOnInsert: { createdAt: new Date() }
+			},
+			{ upsert: true }
 		);
 	}
 	await renewSessionId(locals, cookies);
